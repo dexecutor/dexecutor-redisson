@@ -13,16 +13,24 @@ import com.github.dexecutor.core.task.ExecutionResult;
 import com.github.dexecutor.core.task.Task;
 import com.github.dexecutor.core.task.TaskExecutionException;
 
-public class RedissionExecutionEngine<T, R> implements ExecutionEngine<T, R> {
+/**
+ * Distributed Execution Engine using Redission
+ * 
+ * @author Nadeem Mohammad
+ *
+ * @param <T> Type of Node/Task ID
+ * @param <R> Type of Node/Task result
+ */
+public class RedissonExecutionEngine<T, R> implements ExecutionEngine<T, R> {
 
-	private static final Logger logger = LoggerFactory.getLogger(RedissionExecutionEngine.class);
+	private static final Logger logger = LoggerFactory.getLogger(RedissonExecutionEngine.class);
 
 	private RScheduledExecutorService executorService;
 	private RedissonCompletionService<ExecutionResult<T, R>> completionService;
 
 	private final DexecutorState<T, R> dexecutorState;
 	
-	public RedissionExecutionEngine(DexecutorState<T, R> dexecutorState, RScheduledExecutorService rExecutorService) {
+	public RedissonExecutionEngine(DexecutorState<T, R> dexecutorState, RScheduledExecutorService rExecutorService) {
 		this.dexecutorState = dexecutorState;
 		this.executorService = rExecutorService;
 		this.completionService = new RedissonCompletionService<ExecutionResult<T, R>>(executorService);

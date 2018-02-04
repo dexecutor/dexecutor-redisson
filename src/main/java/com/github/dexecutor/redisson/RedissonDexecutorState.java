@@ -20,6 +20,13 @@ import com.github.dexecutor.core.graph.Validator;
 import com.github.dexecutor.core.task.ExecutionResult;
 import com.github.dexecutor.core.task.ExecutionResults;
 
+/**
+*
+* @author Nadeem Mohammad
+*
+* @param <T> Type of Node/Task ID
+* @param <R> Type of Node/Task result
+*/
 public class RedissonDexecutorState<T, R> implements DexecutorState<T, R> {
 
 	private RAtomicLong nodesCount;
@@ -27,7 +34,7 @@ public class RedissonDexecutorState<T, R> implements DexecutorState<T, R> {
 	private RList<Node<T, R>> discontinuedNodes;
 	private RList<ExecutionResult<T, R>> erroredNodes;
 	private RBucket<Dag<T, R>> dagBucket;
-	private RBucket<Phase> currentPhase;
+	private Phase currentPhase;
 
 	public RedissonDexecutorState(String prefix, RedissonClient client) {
 		this.nodesCount = client.getAtomicLong(prefix + "nodesCount");
@@ -36,11 +43,7 @@ public class RedissonDexecutorState<T, R> implements DexecutorState<T, R> {
 		this.erroredNodes = client.getList(prefix + "erroredNodes");
 		this.dagBucket = client.getBucket(prefix + "dagBucket");
 		this.dagBucket.set(new DefaultDag<T, R>());
-		this.currentPhase = client.getBucket(prefix + "currentPhase"); 
-		
-		if (currentPhase.get() == null) {			
-			this.currentPhase.set(Phase.BUILDING);
-		}
+		this.currentPhase = Phase.BUILDING; 
 	}
 
 	private Dag<T, R> getDag() {
@@ -108,12 +111,12 @@ public class RedissonDexecutorState<T, R> implements DexecutorState<T, R> {
 
 	@Override
 	public void setCurrentPhase(Phase currentPhase) {
-		this.currentPhase.set(currentPhase);		
+		this.currentPhase = currentPhase;
 	}
 
 	@Override
 	public Phase getCurrentPhase() {
-		return this.currentPhase.get();
+		return this.currentPhase;
 	}
 
 	@Override
